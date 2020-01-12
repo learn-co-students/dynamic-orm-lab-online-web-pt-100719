@@ -3,25 +3,25 @@ require 'active_support/inflector'
 
 class InteractiveRecord
 
-  def self.table_name
+  def self.table_name # Changes Student to students
     self.to_s.downcase.pluralize
   end
 
   def self.column_names
     DB[:conn].results_as_hash = true
 
-    sql = "pragma table_info{'#{table_name}'}"
+    sql = "pragma table_info{'#{table_name}'}" # Interpolates the table name we created in the .table_name class method
 
     table_info = DB[:conn].execute(sql)
-    column_names = []
-    table_info.each do |row|
-      column_names << row["name"]
+    column_names = [] # Collects our column names in a handy array
+    table_info.each do |row| # Iterates
+      column_names << row["name"] # Shovels in each column name into the column_names array
     end
     column_names.compact
   end
 
-  self.column_names.each do |col_name|
-    attr_accessor col_name.to_sym
+  self.column_names.each do |col_name| # Iterates over each column name
+    attr_accessor col_name.to_sym # Creates the attributes and converts them to a symbol (i.e. name to :name)
   end
 
   def initialize(options = {})
